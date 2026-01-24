@@ -1,0 +1,21 @@
+{
+  "command": "detect fraud patterns in shipment data - urgent priority",
+  "expected": {
+    "command_id": "cmd-48f19c98ee56",
+    "context": {
+      "original_command": "detect fraud patterns in shipment data - urgent priority"
+    },
+    "intent": "detect",
+    "parameters": {
+      "capabilities": [],
+      "constraints": [],
+      "options": {},
+      "priority": "critical"
+    },
+    "target": {
+      "identifier": "fraud",
+      "name": "fraud",
+      "type": "custom"
+    }
+  }
+}

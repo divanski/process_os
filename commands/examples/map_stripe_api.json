@@ -1,0 +1,23 @@
+{
+  "command": "map API for Stripe payment processing",
+  "expected": {
+    "command_id": "cmd-4e4427cdc716",
+    "context": {
+      "original_command": "map API for Stripe payment processing"
+    },
+    "intent": "map_api",
+    "parameters": {
+      "capabilities": [
+        "api_mapping"
+      ],
+      "constraints": [],
+      "options": {},
+      "priority": "medium"
+    },
+    "target": {
+      "identifier": "stripe",
+      "name": "Stripe",
+      "type": "api"
+    }
+  }
+}

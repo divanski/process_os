@@ -1,0 +1,60 @@
+# Carrier Configuration
+# eushipments_like fixture
+
+carriers:
+  - id: dhl
+    name: DHL Express
+    enabled: true
+    api_version: v1
+    base_url: https://api.dhl.com
+    endpoints:
+      create_shipment: /shipments
+      track: /track/{tracking_number}
+      rates: /rates
+      labels: /labels
+    rate_limits:
+      requests_per_minute: 60
+      requests_per_day: 10000
+    auth:
+      type: api_key
+      header: DHL-API-Key
+
+  - id: fedex
+    name: FedEx
+    enabled: true
+    api_version: v2
+    base_url: https://apis.fedex.com
+    endpoints:
+      create_shipment: /ship/v1/shipments
+      track: /track/v1/trackingnumbers
+      rates: /rate/v1/rates
+      labels: /ship/v1/shipments/{shipment_id}/labels
+    rate_limits:
+      requests_per_minute: 100
+      requests_per_day: 25000
+    auth:
+      type: oauth2
+      token_url: /oauth/token
+
+  - id: ups
+    name: UPS
+    enabled: false
+    api_version: v1
+    base_url: https://onlinetools.ups.com
+    endpoints:
+      create_shipment: /ship/v1/shipments
+      track: /track/v1/details
+      rates: /rating/v1/rate
+    rate_limits:
+      requests_per_minute: 50
+      requests_per_day: 5000
+    auth:
+      type: oauth2
+      token_url: /security/v1/oauth/token
+
+default_carrier: dhl
+
+fallback_order:
+  - dhl
+  - fedex
+  - ups

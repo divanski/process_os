@@ -1,0 +1,123 @@
+# ProcessOS Host Access Policy
+# Default configuration for safe, read-only access to host projects
+
+version: "1.0"
+
+# Mode: "allowlist" (restrictive) or "denylist" (permissive)
+# Allowlist mode: only patterns in allowlist are accessible
+# Denylist mode: everything except denylist patterns is accessible
+mode: "allowlist"
+
+# Allowlist: patterns that ARE allowed (only used in allowlist mode)
+allowlist:
+  patterns:
+    # Source code
+    - "*.py"
+    - "*.js"
+    - "*.ts"
+    - "*.tsx"
+    - "*.jsx"
+    - "*.go"
+    - "*.rs"
+    - "*.java"
+    - "*.kt"
+    - "*.swift"
+    - "*.c"
+    - "*.cpp"
+    - "*.h"
+    - "*.hpp"
+    - "*.cs"
+    - "*.rb"
+    - "*.php"
+
+    # Config files
+    - "*.json"
+    - "*.yaml"
+    - "*.yml"
+    - "*.toml"
+    - "*.ini"
+    - "*.cfg"
+    - "*.conf"
+
+    # Documentation
+    - "*.md"
+    - "*.txt"
+    - "*.rst"
+
+    # Common directories
+    - "src/**/*"
+    - "lib/**/*"
+    - "tests/**/*"
+    - "test/**/*"
+    - "docs/**/*"
+    - "scripts/**/*"
+
+  # Maximum directory depth for traversal
+  max_depth: 10
+
+# Denylist: patterns that are NEVER allowed (always enforced in both modes)
+denylist:
+  patterns:
+    # Version control
+    - ".git/**"
+    - ".git"
+    - ".svn/**"
+    - ".hg/**"
+
+    # Environment and secrets
+    - ".env"
+    - ".env.*"
+    - "**/*.key"
+    - "**/*.pem"
+    - "**/*.p12"
+    - "**/*.pfx"
+    - "**/secrets/**"
+    - "**/credentials/**"
+    - "**/.secrets/**"
+    - "**/private/**"
+
+    # IDE and tool configs with potential secrets
+    - "**/.claude/**"
+    - "**/.vscode/settings.json"
+    - "**/.idea/**"
+
+    # Dependencies (too large, not relevant)
+    - "**/node_modules/**"
+    - "**/__pycache__/**"
+    - "**/.venv/**"
+    - "**/venv/**"
+    - "**/.tox/**"
+    - "**/vendor/**"
+    - "**/target/**"
+    - "**/dist/**"
+    - "**/build/**"
+
+    # Binary and compiled files
+    - "**/*.exe"
+    - "**/*.dll"
+    - "**/*.so"
+    - "**/*.dylib"
+    - "**/*.pyc"
+    - "**/*.pyo"
+    - "**/*.class"
+    - "**/*.o"
+    - "**/*.a"
+
+    # Archives
+    - "**/*.zip"
+    - "**/*.tar"
+    - "**/*.gz"
+    - "**/*.bz2"
+    - "**/*.7z"
+    - "**/*.rar"
+
+# Resource limits
+limits:
+  # Maximum size of a single file in KB
+  max_file_size_kb: 500
+
+  # Maximum number of files returned per list query
+  max_files_per_query: 100
+
+  # Maximum total size of all files in a single operation in KB
+  max_total_size_kb: 5000

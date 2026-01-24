@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://processos.dev/schemas/squad-request.schema.json",
+  "title": "SquadRequest",
+  "description": "Parsed human command for squad generation",
+  "type": "object",
+  "required": ["request_id", "command_type", "target", "parameters"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "pattern": "^req-[a-f0-9]{12}$",
+      "description": "Deterministic ID derived from command hash"
+    },
+    "command_type": {
+      "type": "string",
+      "enum": ["integration", "custom"],
+      "description": "Type of squad to generate (integration types are determined dynamically)"
+    },
+    "target": {
+      "type": "object",
+      "required": ["name", "identifier"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Human-readable target name"
+        },
+        "identifier": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,49}$",
+          "description": "kebab-case identifier for file naming"
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Command-specific parameters",
+      "additionalProperties": true,
+      "properties": {
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "medium"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Required capabilities for this integration"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Hard constraints that must be respected"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context for generation",
+      "additionalProperties": true
+    }
+  }
+}

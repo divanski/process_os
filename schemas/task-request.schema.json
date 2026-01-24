@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://processos.dev/schemas/task-request.schema.json",
+  "title": "TaskRequest",
+  "description": "Structured representation of a user command for ProcessOS",
+  "type": "object",
+  "required": ["command_id", "intent", "target", "parameters"],
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "pattern": "^cmd-[a-f0-9]{12}$",
+      "description": "Deterministic ID derived from command text (SHA256 truncated)"
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "integrate",
+        "map_api",
+        "detect",
+        "analyze",
+        "generate",
+        "validate",
+        "custom"
+      ],
+      "description": "High-level intent of the command"
+    },
+    "target": {
+      "type": "object",
+      "required": ["name", "identifier", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Human-readable target name"
+        },
+        "identifier": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,49}$",
+          "description": "Kebab-case identifier for file/folder naming"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "Target type category - dynamically inferred from command (e.g., courier, payment, api, service)"
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "priority": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "default": "medium",
+          "description": "Task priority level"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Required capabilities for the target"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Constraints or restrictions"
+        },
+        "options": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional options extracted from command"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "original_command": {
+          "type": "string",
+          "description": "Original command text as entered"
+        },
+        "parsed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp when command was parsed"
+        },
+        "host_root": {
+          "type": "string",
+          "description": "Root path of host project"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+# ProcessOS Tool Policy
+# Sprint 6 - Tools are DISABLED by default
+
+policy:
+  enabled: false
+  require_explicit_opt_in: true
+  audit_all_calls: true
+  max_calls_per_run: 100
+
+# Allowlisted tools (only these can ever be enabled)
+allowlist:
+  - tool_id: file_read
+    description: "Read file from host project via HostAdapter"
+    risk_level: low
+    requires_policy_check: true
+    constraints:
+      - "Must use HostAdapter (not direct filesystem)"
+      - "Subject to HostPolicy allowlist/denylist"
+
+  - tool_id: http_fetch
+    description: "Fetch public URL for documentation"
+    risk_level: medium
+    requires_explicit_url: true
+    allowed_domains:
+      - "*.docs.example.com"
+      - "api.github.com"
+      - "raw.githubusercontent.com"
+    blocked_domains:
+      - "*.internal.*"
+      - "localhost"
+      - "127.0.0.1"
+      - "10.*"
+      - "192.168.*"
+      - "172.16.*"
+    rate_limit:
+      requests_per_minute: 10
+      total_per_run: 50
+
+  - tool_id: schema_validate
+    description: "Validate JSON/YAML against schema"
+    risk_level: low
+    requires_policy_check: false
+    constraints:
+      - "Read-only validation"
+      - "No external calls"
+
+# Permanently denied tools (never allowed)
+denylist:
+  - tool_id: file_write
+    reason: "ProcessOS does not write to host projects in Sprint 6"
+
+  - tool_id: shell_exec
+    reason: "Shell execution is never allowed"
+
+  - tool_id: patch_apply
+    reason: "Patches are generated only, not applied"
+
+  - tool_id: network_connect
+    reason: "Arbitrary network connections not allowed"
+
+  - tool_id: env_read
+    reason: "Environment variable access not allowed"
+
+# Audit configuration
+audit:
+  log_all_attempts: true
+  log_denied_calls: true
+  include_parameters: false  # Don't log parameters (may contain secrets)

@@ -1,0 +1,50 @@
+# ==============================================
+# ProcessOS .gitignore
+# ==============================================
+
+# Runtime state (NEVER commit)
+.processos/
+process_os_output/
+process_os/runtime/runs/
+process_os/workspaces/ws-*
+
+# Development extras (not shipped in embed kit)
+extras/
+
+# Environment files
+.env
+process_os/.env
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# BMAD development (not shipped)
+_bmad/
+_bmad-output/
+.claude/commands/bmad/

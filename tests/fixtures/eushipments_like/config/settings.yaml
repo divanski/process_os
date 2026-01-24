@@ -1,0 +1,43 @@
+# Application Settings
+# eushipments_like fixture
+
+application:
+  name: euShipments
+  version: 2.1.0
+  environment: production
+
+shipping:
+  default_weight_unit: kg
+  default_dimension_unit: cm
+  max_package_weight: 70
+  max_package_dimensions:
+    length: 120
+    width: 80
+    height: 80
+
+tracking:
+  update_interval_minutes: 15
+  max_history_days: 90
+  webhook_enabled: true
+  webhook_url: /api/webhooks/tracking
+
+labels:
+  format: pdf
+  size: 4x6
+  include_barcode: true
+  include_qr: false
+
+rates:
+  cache_duration_minutes: 30
+  include_taxes: true
+  currency: EUR
+
+error_handling:
+  max_retries: 3
+  retry_delay_seconds: 5
+  exponential_backoff: true
+
+logging:
+  level: INFO
+  format: json
+  include_request_id: true

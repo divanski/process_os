@@ -1,0 +1,28 @@
+---
+# ProcessOS Agent Registry
+# Version: 2.0 (Dynamic Integration Engine)
+# Purpose: Dynamic agent registry for ProcessOS; supports dynamic agent creation and capability-based matching
+#
+# NOTE: This registry is now populated dynamically at runtime.
+# Agents are created based on integration requirements and persisted for reuse.
+# See: process_os/agents/ module for dynamic agent management.
+
+registry_version: "2.0"
+description: "Dynamic agent registry for ProcessOS; agents are created and registered at runtime based on integration requirements"
+
+# Dynamic agents will be stored in .processos/agents/<agent_id>.json
+# This file serves as the registry index
+agents: []
+
+# Registry metadata
+registry_metadata:
+  created_at: "2026-01-23T00:00:00Z"
+  last_updated: "2026-01-23T00:00:00Z"
+  total_agents: 0
+  lifecycle_stage: "dynamic"
+  governance:
+    - "Agents are created dynamically based on integration requirements"
+    - "Agent capability matching uses Jaccard similarity with threshold >= 0.6"
+    - "All agents execute within declared IO contracts"
+    - "Agent definitions are persisted in .processos/agents/ for reuse"
+    - "Agent versioning enables backward compatibility"
