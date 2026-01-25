@@ -3,17 +3,22 @@ Architecture analyzer for ProcessOS.
 
 Main entry point for architecture detection, analysis, and reporting.
 Orchestrates language/framework detection, pattern discovery, and convention learning.
+Supports real-time progress streaming via WebSocket (T065).
 """
 
+import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, TYPE_CHECKING
 
 from process_os.architecture.types import ProjectArchitecture, ProgrammingLanguage
 from process_os.architecture.detector import LanguageDetector, FrameworkDetector
 from process_os.patterns import IntegrationPattern, PatternDiscoverer
 from process_os.conventions import ConventionLearner, CodeConventions
+
+if TYPE_CHECKING:
+    from process_os.llm.server import AsyncWebSocketServer
 
 
 @dataclass
@@ -63,19 +68,32 @@ class ArchitectureAnalyzer:
     """Main analyzer for project architecture detection and reporting.
 
     Orchestrates:
-    1. Language detection
-    2. Framework detection
-    3. Pattern discovery
-    4. Convention learning
+    1. Language detection (25% progress)
+    2. Framework detection (50% progress)
+    3. Pattern discovery (75% progress)
+    4. Convention learning (100% progress)
     5. Recommendations and warnings generation
+
+    Supports optional real-time progress streaming via WebSocket (T065).
     """
 
-    def __init__(self):
-        """Initialize the architecture analyzer."""
+    def __init__(
+        self,
+        websocket_server: Optional["AsyncWebSocketServer"] = None,
+        session_id: Optional[str] = None,
+    ):
+        """Initialize the architecture analyzer.
+
+        Args:
+            websocket_server: Optional AsyncWebSocketServer for progress streaming
+            session_id: Optional session ID for progress streaming
+        """
         self.language_detector = LanguageDetector()
         self.framework_detector = FrameworkDetector()
         self.pattern_discoverer = PatternDiscoverer()
         self.convention_learner = ConventionLearner()
+        self.websocket_server = websocket_server
+        self.session_id = session_id
 
     def analyze(
         self,
@@ -133,6 +151,258 @@ class ArchitectureAnalyzer:
             )
 
         return architecture
+
+    async def analyze_with_progress(
+        self,
+        project_path: Path,
+        target_directory: Optional[Path] = None,
+    ) -> ProjectArchitecture:
+        """Analyze project with real-time progress streaming via WebSocket (T065).
+
+        Args:
+            project_path: Path to project root
+            target_directory: Optional subdirectory for monorepos
+
+        Returns:
+            ProjectArchitecture with confidence >= 0.9
+
+        Raises:
+            ValueError: If detection confidence is below 0.9
+        """
+        if not isinstance(project_path, Path):
+            project_path = Path(project_path)
+
+        # Emit progress: Language detection starting
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="language_detection",
+                progress_percent=0.0,
+                current_step="Scanning file extensions and headers",
+                step_number=1,
+                total_steps=4,
+                confidence_scores={"language_detection": 0.0},
+            )
+
+        # Detect language
+        language_detection = self.language_detector.detect(
+            project_path,
+            target_directory,
+        )
+
+        # Emit progress: Language detection complete
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="language_detection",
+                progress_percent=25.0,
+                current_step=f"Language detected: {language_detection.detected_language}",
+                step_number=1,
+                total_steps=4,
+                confidence_scores={
+                    "language_detection": language_detection.confidence
+                },
+            )
+            # Wait for rate limiter
+            await asyncio.sleep(1.1)
+
+        # Emit progress: Framework detection starting
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="framework_detection",
+                progress_percent=25.0,
+                current_step="Detecting framework patterns",
+                step_number=2,
+                total_steps=4,
+                confidence_scores={"framework_detection": 0.0},
+            )
+
+        # Detect framework
+        framework_detection = self.framework_detector.detect(
+            project_path,
+            language_detection.detected_language,
+            target_directory,
+        )
+
+        # Emit progress: Framework detection complete
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="framework_detection",
+                progress_percent=50.0,
+                current_step=f"Framework detected: {framework_detection.detected_framework}",
+                step_number=2,
+                total_steps=4,
+                confidence_scores={
+                    "framework_detection": framework_detection.confidence
+                },
+            )
+            # Wait for rate limiter
+            await asyncio.sleep(1.1)
+
+        # Create architecture with detected values
+        architecture = ProjectArchitecture(
+            root_path=target_directory or project_path,
+            language=language_detection.detected_language,
+            framework=framework_detection.detected_framework,
+            confidence=min(
+                language_detection.confidence,
+                framework_detection.confidence,
+            ),
+            detection_signals=[language_detection, framework_detection],
+            project_type=framework_detection.project_type,
+            target_directory=target_directory,
+        )
+
+        # Validate confidence threshold
+        if architecture.confidence < 0.9:
+            raise ValueError(
+                f"Architecture detection confidence {architecture.confidence:.2%} "
+                f"is below required threshold 0.9. "
+                f"Use user corrections to override or provide more context."
+            )
+
+        return architecture
+
+    async def generate_report_with_progress(
+        self,
+        architecture: ProjectArchitecture,
+        discover_patterns: bool = True,
+        learn_conventions: bool = True,
+    ) -> ArchitectureReport:
+        """Generate comprehensive report with real-time progress streaming (T065).
+
+        Args:
+            architecture: Detected project architecture
+            discover_patterns: Whether to discover integration patterns
+            learn_conventions: Whether to learn code conventions
+
+        Returns:
+            ArchitectureReport with analysis and recommendations
+        """
+        patterns = []
+        conventions = None
+
+        # Emit progress: Pattern discovery starting
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="pattern_discovery",
+                progress_percent=50.0,
+                current_step="Discovering integration patterns",
+                step_number=3,
+                total_steps=4,
+                confidence_scores={"pattern_discovery": 0.0},
+            )
+
+        # Discover patterns if requested
+        if discover_patterns and architecture.root_path.exists():
+            try:
+                discovered_patterns = self.pattern_discoverer.discover_all(
+                    architecture.root_path,
+                    architecture.language,
+                )
+                patterns = discovered_patterns
+            except Exception:
+                # Silently continue if pattern discovery fails
+                pass
+
+        # Emit progress: Pattern discovery complete
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="pattern_discovery",
+                progress_percent=75.0,
+                current_step=f"Found {len(patterns)} patterns",
+                step_number=3,
+                total_steps=4,
+                confidence_scores={
+                    "pattern_discovery": 0.8 if patterns else 0.5
+                },
+            )
+            # Wait for rate limiter
+            await asyncio.sleep(1.1)
+
+        # Emit progress: Convention learning starting
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="convention_learning",
+                progress_percent=75.0,
+                current_step="Learning code conventions",
+                step_number=4,
+                total_steps=4,
+                confidence_scores={"convention_learning": 0.0},
+            )
+
+        # Learn conventions if requested
+        if learn_conventions and architecture.root_path.exists():
+            try:
+                conventions = self.convention_learner.learn_conventions(
+                    architecture.root_path,
+                    architecture,
+                    sample_size=10,
+                )
+            except Exception:
+                # Silently continue if convention learning fails
+                pass
+
+        # Generate recommendations
+        recommendations = self._generate_recommendations(
+            architecture,
+            patterns,
+            conventions,
+        )
+
+        # Generate warnings
+        warnings = self._generate_warnings(
+            architecture,
+            patterns,
+            conventions,
+        )
+
+        report = ArchitectureReport(
+            architecture=architecture,
+            patterns=patterns,
+            conventions=conventions,
+            recommendations=recommendations,
+            warnings=warnings,
+            analyzed_at=datetime.now(),
+        )
+
+        # Emit progress: Convention learning complete
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_progress(
+                session_id=self.session_id,
+                phase="convention_learning",
+                progress_percent=100.0,
+                current_step=f"Learned {len(conventions.namespaces) if conventions else 0} conventions",
+                step_number=4,
+                total_steps=4,
+                confidence_scores={
+                    "convention_learning": getattr(conventions, "confidence", 0.7)
+                    if conventions
+                    else 0.5
+                },
+            )
+            # Wait for rate limiter
+            await asyncio.sleep(1.1)
+
+        # Emit final progress summary
+        if self.websocket_server and self.session_id:
+            await self.websocket_server.emit_final_progress(
+                session_id=self.session_id,
+                language=str(architecture.language.value),
+                framework=str(architecture.framework.value) if architecture.framework else "Unknown",
+                patterns_discovered=len(patterns),
+                conventions_learned=len(conventions.namespaces)
+                if conventions
+                else 0,
+                overall_confidence=architecture.confidence,
+            )
+
+        return report
 
     def generate_report(
         self,

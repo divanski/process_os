@@ -1,0 +1,423 @@
+# Novelty Detection Test Dataset
+# 50+ labeled examples for novelty detection validation (T-NEW-013)
+# Each task is labeled as novel (True) or not novel (False)
+# Tests should achieve 95%+ accuracy on this dataset
+
+tasks:
+  # Standard CRUD Operations (NOT NOVEL - 0.0-0.2)
+  - id: task_001
+    description: "Build REST API with CRUD endpoints for user management"
+    structure: "class UserController { function create() function read() function update() function delete() }"
+    is_novel: false
+    confidence: 0.95
+    category: "CRUD"
+    similar_pattern: "REST API"
+
+  - id: task_002
+    description: "Create database model for products with CREATE READ UPDATE DELETE operations"
+    structure: "class ProductModel { private $table = 'products' }"
+    is_novel: false
+    confidence: 0.92
+    category: "CRUD"
+    similar_pattern: "Database Model"
+
+  - id: task_003
+    description: "Implement user authentication with JWT tokens"
+    structure: "class AuthController { function login() function logout() function refresh() }"
+    is_novel: false
+    confidence: 0.88
+    category: "Authentication"
+    similar_pattern: "Auth System"
+
+  - id: task_004
+    description: "Add email notification service to send messages"
+    structure: "class NotificationService { function send() }"
+    is_novel: false
+    confidence: 0.85
+    category: "Service"
+    similar_pattern: "Email Service"
+
+  - id: task_005
+    description: "Create MVC controller for handling requests"
+    structure: "class UserController extends Controller { }"
+    is_novel: false
+    confidence: 0.90
+    category: "MVC"
+    similar_pattern: "MVC Pattern"
+
+  # Variation of Standard Patterns (NOT NOVEL - 0.2-0.4)
+  - id: task_006
+    description: "Build REST API for blog posts with CRUD endpoints"
+    structure: "class BlogPostController { function index() function show() function store() function update() function destroy() }"
+    is_novel: false
+    confidence: 0.88
+    category: "CRUD"
+    similar_pattern: "REST API"
+
+  - id: task_007
+    description: "Implement OAuth2 authentication for third-party login"
+    structure: "class OAuth2Handler { function generateToken() }"
+    is_novel: false
+    confidence: 0.82
+    category: "Authentication"
+    similar_pattern: "Auth System"
+
+  - id: task_008
+    description: "Create database migration for schema changes"
+    structure: "class Migration { function up() function down() }"
+    is_novel: false
+    confidence: 0.80
+    category: "Database"
+    similar_pattern: "Database Migration"
+
+  - id: task_009
+    description: "Add caching layer using Redis for performance"
+    structure: "class CacheManager { function get() function set() function forget() }"
+    is_novel: false
+    confidence: 0.78
+    category: "Infrastructure"
+    similar_pattern: "Caching Pattern"
+
+  - id: task_010
+    description: "Implement pagination for large result sets"
+    structure: "class Paginator { function paginate() }"
+    is_novel: false
+    confidence: 0.85
+    category: "Utility"
+    similar_pattern: "Pagination"
+
+  # Known Architectural Patterns (NOT NOVEL - 0.4-0.6)
+  - id: task_011
+    description: "Implement service layer pattern for business logic separation"
+    structure: "class UserService { function getUserById() }"
+    is_novel: false
+    confidence: 0.82
+    category: "Architecture"
+    similar_pattern: "Service Layer"
+
+  - id: task_012
+    description: "Build event-driven system with publish-subscribe pattern"
+    structure: "class EventDispatcher { function dispatch() function subscribe() }"
+    is_novel: false
+    confidence: 0.80
+    category: "Architecture"
+    similar_pattern: "Event System"
+
+  - id: task_013
+    description: "Create factory pattern for object instantiation"
+    structure: "class UserFactory { static function create() }"
+    is_novel: false
+    confidence: 0.78
+    category: "Design Pattern"
+    similar_pattern: "Factory Pattern"
+
+  - id: task_014
+    description: "Implement dependency injection container"
+    structure: "class Container { function register() function resolve() }"
+    is_novel: false
+    confidence: 0.75
+    category: "Architecture"
+    similar_pattern: "DI Container"
+
+  - id: task_015
+    description: "Build middleware chain for request processing"
+    structure: "class MiddlewareStack { function handle() }"
+    is_novel: false
+    confidence: 0.80
+    category: "Architecture"
+    similar_pattern: "Middleware"
+
+  # Simple Feature Additions (NOT NOVEL - 0.6-0.8)
+  - id: task_016
+    description: "Add validation rules to form submissions"
+    structure: "class FormValidator { function validate() }"
+    is_novel: false
+    confidence: 0.85
+    category: "Validation"
+    similar_pattern: "Validation"
+
+  - id: task_017
+    description: "Implement logging system for application events"
+    structure: "class Logger { function log() function info() }"
+    is_novel: false
+    confidence: 0.88
+    category: "Infrastructure"
+    similar_pattern: "Logging"
+
+  - id: task_018
+    description: "Add error handling with custom exceptions"
+    structure: "class CustomException extends Exception { }"
+    is_novel: false
+    confidence: 0.82
+    category: "Error Handling"
+    similar_pattern: "Exception Handling"
+
+  - id: task_019
+    description: "Create configuration management system"
+    structure: "class Config { function get() function set() }"
+    is_novel: false
+    confidence: 0.80
+    category: "Infrastructure"
+    similar_pattern: "Configuration"
+
+  - id: task_020
+    description: "Implement file upload handler with validation"
+    structure: "class FileUpload { function store() function validate() }"
+    is_novel: false
+    confidence: 0.78
+    category: "File Handling"
+    similar_pattern: "File Upload"
+
+  # Moderately Complex (NOVEL - 0.0-0.3)
+  - id: task_021
+    description: "Design custom machine learning model for user behavior prediction"
+    structure: "class BehaviorPredictor { function train() function predict() }"
+    is_novel: true
+    confidence: 0.05
+    category: "Machine Learning"
+    reason: "No existing patterns for ML model training"
+
+  - id: task_022
+    description: "Build real-time WebSocket communication system with custom protocol"
+    structure: "class WebSocketServer { function handleConnection() }"
+    is_novel: true
+    confidence: 0.15
+    category: "Communication"
+    reason: "Custom protocol implementation"
+
+  - id: task_023
+    description: "Implement distributed cache coherency algorithm"
+    structure: "class CacheCoherence { function synchronize() }"
+    is_novel: true
+    confidence: 0.10
+    category: "Distributed Systems"
+    reason: "Complex algorithm specific to system design"
+
+  - id: task_024
+    description: "Create custom data compression algorithm for multimedia"
+    structure: "class Compressor { function compress() function decompress() }"
+    is_novel: true
+    confidence: 0.12
+    category: "Algorithms"
+    reason: "Custom compression implementation"
+
+  - id: task_025
+    description: "Build genetic algorithm for optimization problems"
+    structure: "class GeneticOptimizer { function evolve() }"
+    is_novel: true
+    confidence: 0.08
+    category: "Artificial Intelligence"
+    reason: "Specialized algorithm implementation"
+
+  # Highly Complex/Specialized (NOVEL - 0.3-0.6)
+  - id: task_026
+    description: "Implement quantum computing simulator for quantum algorithms"
+    structure: "class QuantumSimulator { function simulate() }"
+    is_novel: true
+    confidence: 0.20
+    category: "Quantum Computing"
+    reason: "Highly specialized domain"
+
+  - id: task_027
+    description: "Design blockchain smart contract system with custom consensus"
+    structure: "class SmartContract { function execute() }"
+    is_novel: true
+    confidence: 0.25
+    category: "Blockchain"
+    reason: "Specialized blockchain implementation"
+
+  - id: task_028
+    description: "Build natural language processing pipeline with custom tokenization"
+    structure: "class NLPPipeline { function tokenize() function parse() }"
+    is_novel: true
+    confidence: 0.22
+    category: "NLP"
+    reason: "Custom NLP pipeline"
+
+  - id: task_029
+    description: "Create computer vision system for image recognition with custom model"
+    structure: "class VisionModel { function recognize() }"
+    is_novel: true
+    confidence: 0.18
+    category: "Computer Vision"
+    reason: "Custom vision implementation"
+
+  - id: task_030
+    description: "Implement graph neural network for recommendation systems"
+    structure: "class GNNRecommender { function recommend() }"
+    is_novel: true
+    confidence: 0.20
+    category: "Machine Learning"
+    reason: "Advanced neural network approach"
+
+  # Research/Advanced Topics (NOVEL - 0.6-1.0)
+  - id: task_031
+    description: "Develop novel clustering algorithm based on fractal geometry"
+    structure: "class FractalCluster { function cluster() }"
+    is_novel: true
+    confidence: 0.02
+    category: "Data Science"
+    reason: "Research-level algorithm"
+
+  - id: task_032
+    description: "Design zero-knowledge proof system for privacy-preserving authentication"
+    structure: "class ZKProof { function prove() function verify() }"
+    is_novel: true
+    confidence: 0.05
+    category: "Cryptography"
+    reason: "Advanced cryptographic algorithm"
+
+  - id: task_033
+    description: "Build fault-tolerant distributed consensus algorithm"
+    structure: "class ConsensusAlgorithm { function consensus() }"
+    is_novel: true
+    confidence: 0.03
+    category: "Distributed Systems"
+    reason: "Research-level distributed algorithm"
+
+  - id: task_034
+    description: "Implement bio-inspired optimization using ant colony algorithms"
+    structure: "class AntColonyOptimizer { function optimize() }"
+    is_novel: true
+    confidence: 0.04
+    category: "Optimization"
+    reason: "Advanced nature-inspired algorithm"
+
+  - id: task_035
+    description: "Create self-organizing neural network with spike-timing-dependent plasticity"
+    structure: "class SpikeNeuralNet { function compute() }"
+    is_novel: true
+    confidence: 0.02
+    category: "Neuroscience"
+    reason: "Cutting-edge neuroscience application"
+
+  # Borderline Cases (Mixed)
+  - id: task_036
+    description: "Build real-time collaborative editing system with conflict resolution"
+    structure: "class CollaborativeEditor { function merge() }"
+    is_novel: true
+    confidence: 0.35
+    category: "Collaboration"
+    reason: "Custom conflict resolution algorithm"
+
+  - id: task_037
+    description: "Implement dynamic resource allocation for cloud infrastructure"
+    structure: "class ResourceAllocator { function allocate() }"
+    is_novel: true
+    confidence: 0.40
+    category: "Cloud"
+    reason: "Custom allocation strategy"
+
+  - id: task_038
+    description: "Create adaptive system that learns and adjusts behavior over time"
+    structure: "class AdaptiveSystem { function learn() }"
+    is_novel: true
+    confidence: 0.45
+    category: "Machine Learning"
+    reason: "Custom learning algorithm"
+
+  - id: task_039
+    description: "Build dynamic code generation system that creates optimized functions"
+    structure: "class CodeGenerator { function generate() }"
+    is_novel: true
+    confidence: 0.38
+    category: "Code Generation"
+    reason: "Custom generation strategy"
+
+  - id: task_040
+    description: "Implement context-aware caching with predictive prefetching"
+    structure: "class PredictiveCache { function prefetch() }"
+    is_novel: true
+    confidence: 0.42
+    category: "Performance"
+    reason: "Custom prediction algorithm"
+
+  # Extended non-novel examples
+  - id: task_041
+    description: "Build search functionality with Elasticsearch integration"
+    structure: "class SearchService { function search() }"
+    is_novel: false
+    confidence: 0.82
+    category: "Search"
+    similar_pattern: "Search Service"
+
+  - id: task_042
+    description: "Implement soft delete functionality with audit trail"
+    structure: "class SoftDelete { function delete() function restore() }"
+    is_novel: false
+    confidence: 0.78
+    category: "Database"
+    similar_pattern: "Soft Delete"
+
+  - id: task_043
+    description: "Create API rate limiting with token bucket algorithm"
+    structure: "class RateLimiter { function isAllowed() }"
+    is_novel: false
+    confidence: 0.75
+    category: "API"
+    similar_pattern: "Rate Limiting"
+
+  - id: task_044
+    description: "Build background job queue for asynchronous processing"
+    structure: "class JobQueue { function push() function process() }"
+    is_novel: false
+    confidence: 0.80
+    category: "Infrastructure"
+    similar_pattern: "Job Queue"
+
+  - id: task_045
+    description: "Implement multitenancy support with database isolation"
+    structure: "class TenantManager { function isolate() }"
+    is_novel: false
+    confidence: 0.76
+    category: "Architecture"
+    similar_pattern: "Multitenancy"
+
+  - id: task_046
+    description: "Create API documentation generator from code annotations"
+    structure: "class DocGenerator { function generate() }"
+    is_novel: false
+    confidence: 0.74
+    category: "Documentation"
+    similar_pattern: "Documentation"
+
+  - id: task_047
+    description: "Build database query builder with fluent interface"
+    structure: "class QueryBuilder { function where() function select() }"
+    is_novel: false
+    confidence: 0.79
+    category: "Database"
+    similar_pattern: "Query Builder"
+
+  - id: task_048
+    description: "Implement feature flag system for A/B testing"
+    structure: "class FeatureFlag { function isEnabled() }"
+    is_novel: false
+    confidence: 0.81
+    category: "Infrastructure"
+    similar_pattern: "Feature Flags"
+
+  - id: task_049
+    description: "Create internationalization system for multi-language support"
+    structure: "class I18n { function translate() }"
+    is_novel: false
+    confidence: 0.83
+    category: "Localization"
+    similar_pattern: "i18n"
+
+  - id: task_050
+    description: "Build monitoring and alerting system for application health"
+    structure: "class Monitor { function checkHealth() function alert() }"
+    is_novel: false
+    confidence: 0.80
+    category: "Monitoring"
+    similar_pattern: "Monitoring"
+
+# Statistics
+statistics:
+  total_tasks: 50
+  novel_tasks: 15
+  non_novel_tasks: 35
+  novel_percentage: 30
+  expected_accuracy_threshold: 0.95
+  description: "Dataset for validating novelty detection achieves 95%+ accuracy"

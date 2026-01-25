@@ -6,7 +6,7 @@ Data types for LLM responses and usage tracking.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -96,3 +96,139 @@ class LLMResponse:
             created_at=created_at,
             metadata=data.get("metadata", {}),
         )
+
+
+@dataclass
+class DetectionSignal:
+    """
+    Single signal evaluated during architecture detection.
+
+    Signals are individual indicators of language, framework, patterns, or conventions.
+    Each signal contributes a confidence score to overall analysis.
+    """
+
+    signal_type: str  # file_extension, import_analysis, framework_markers, convention_analysis
+    signal_name: str
+    confidence: float  # [0.0, 1.0]
+    evidence: List[str] = field(default_factory=list)  # Evidence supporting this signal
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "signal_type": self.signal_type,
+            "signal_name": self.signal_name,
+            "confidence": self.confidence,
+            "evidence": self.evidence,
+        }
+
+
+@dataclass
+class ConventionProfile:
+    """
+    Learned conventions from project analysis.
+
+    Contains naming styles, directory structures, documentation patterns, etc.
+    discovered during architecture analysis.
+    """
+
+    language: str
+    framework: str
+
+    # Naming conventions
+    class_naming_style: Optional[str] = None  # PascalCase, snake_case, etc.
+    method_naming_style: Optional[str] = None
+    variable_naming_style: Optional[str] = None
+
+    # Directory structure conventions
+    namespace_pattern: Optional[str] = None  # e.g., App\Services\{Domain}
+    directory_structure: Optional[str] = None
+
+    # Documentation patterns
+    documentation_style: Optional[str] = None
+
+    # Additional discovered conventions
+    additional_conventions: Dict[str, Any] = field(default_factory=dict)
+
+    # Confidence in the convention profile
+    overall_confidence: float = 0.0  # [0.0, 1.0]
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "language": self.language,
+            "framework": self.framework,
+            "class_naming_style": self.class_naming_style,
+            "method_naming_style": self.method_naming_style,
+            "variable_naming_style": self.variable_naming_style,
+            "namespace_pattern": self.namespace_pattern,
+            "directory_structure": self.directory_structure,
+            "documentation_style": self.documentation_style,
+            "additional_conventions": self.additional_conventions,
+            "overall_confidence": self.overall_confidence,
+        }
+
+
+@dataclass
+class ArchitectureAnalysis:
+    """
+    Record of a single architecture detection run.
+
+    Contains all signals, patterns, and conventions detected from a project,
+    along with confidence scores and metadata.
+    """
+
+    analysis_id: str  # UUID
+    session_id: str  # UUID
+    timestamp: datetime
+    project_id: str  # Hash of project path
+
+    # Detection results
+    detected_language: str
+    detected_framework: str
+    overall_confidence: float  # [0.0, 1.0], must be ≥0.90 for code generation
+
+    # Analysis details
+    signals_used: List[DetectionSignal] = field(default_factory=list)
+    patterns_discovered: List[Dict[str, Any]] = field(default_factory=list)
+    conventions_learned: Optional[ConventionProfile] = None
+
+    # Metadata
+    files_scanned: int = 0
+    files_analyzed: int = 0
+    analysis_duration_seconds: float = 0.0
+    project_size_mb: float = 0.0
+    language_breakdown: Dict[str, int] = field(default_factory=dict)
+    framework_marker_strength: str = "weak"  # weak | moderate | strong
+
+    # User information
+    user_id: str = ""
+
+    # Approval status
+    approval_status: str = "pending"  # pending | approved | rejected
+    rejection_reason: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "analysis_id": self.analysis_id,
+            "session_id": self.session_id,
+            "timestamp": self.timestamp.isoformat(),
+            "project_id": self.project_id,
+            "detected_language": self.detected_language,
+            "detected_framework": self.detected_framework,
+            "overall_confidence": self.overall_confidence,
+            "signals_used": [s.to_dict() for s in self.signals_used],
+            "patterns_discovered": self.patterns_discovered,
+            "conventions_learned": self.conventions_learned.to_dict()
+            if self.conventions_learned
+            else None,
+            "files_scanned": self.files_scanned,
+            "files_analyzed": self.files_analyzed,
+            "analysis_duration_seconds": self.analysis_duration_seconds,
+            "project_size_mb": self.project_size_mb,
+            "language_breakdown": self.language_breakdown,
+            "framework_marker_strength": self.framework_marker_strength,
+            "user_id": self.user_id,
+            "approval_status": self.approval_status,
+            "rejection_reason": self.rejection_reason,
+        }
