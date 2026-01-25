@@ -166,17 +166,17 @@ def _create_processos_structure(base_path: Path) -> tuple:
     return processos_dir, workspaces_root
 
 
-def _setup_mock_inbox_materials(processos_dir: Path, courier_slug: str):
+def _setup_mock_inbox_materials(processos_dir: Path, integration_id: str):
     """Create mock inbox materials for courier integration tests."""
     # Create inbox directory with API docs
-    inbox_dir = processos_dir / "inbox" / "couriers" / courier_slug
+    inbox_dir = processos_dir / "inbox" / "integrations" / integration_id
     inbox_dir.mkdir(parents=True, exist_ok=True)
     (inbox_dir / "openapi.yaml").write_text("openapi: 3.0.0\ninfo:\n  title: Mock API\n")
 
     # Create secrets file
     secrets_dir = processos_dir / "secrets"
     secrets_dir.mkdir(exist_ok=True)
-    (secrets_dir / f"courier_{courier_slug}.env").write_text(f"{courier_slug.upper()}_API_KEY=test_key\n")
+    (secrets_dir / f"integration_{integration_id}.env").write_text(f"{integration_id.upper()}_API_KEY=test_key\n")
 
 
 class TestWorkspaceRunnerExecution:

@@ -320,7 +320,7 @@ class TestInboxGatesForCourierIntegrations:
 
         assert len(workspace.playbook.inbox_gates) == 1
         gate = workspace.playbook.inbox_gates[0]
-        assert gate.courier_slug == "fedex"
+        assert gate.integration_id == "fedex"
 
     def test_inbox_gate_has_correct_required_docs(self):
         """Inbox gate specifies common API doc formats."""
@@ -374,4 +374,4 @@ class TestInboxGatesForCourierIntegrations:
 
             assert "inbox_gates" in playbook_data
             assert len(playbook_data["inbox_gates"]) == 1
-            assert playbook_data["inbox_gates"][0]["courier_slug"] == "fedex"
+            assert playbook_data["inbox_gates"][0]["integration_id"] == "fedex"

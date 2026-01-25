@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING
 
-from process_os.architecture.types import ProjectArchitecture, ProgrammingLanguage
+from process_os.architecture.types import ProjectArchitecture
 from process_os.architecture.detector import LanguageDetector, FrameworkDetector
 from process_os.patterns import IntegrationPattern, PatternDiscoverer
 from process_os.conventions import ConventionLearner, CodeConventions

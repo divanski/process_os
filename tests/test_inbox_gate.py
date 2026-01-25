@@ -29,7 +29,7 @@ class TestInboxGateConfig:
 
     def test_default_required_one_of(self):
         """Default required_one_of includes common API doc formats."""
-        config = InboxGateConfig(courier_slug="fedex")
+        config = InboxGateConfig(integration_id="fedex")
 
         assert "*.postman_collection.json" in config.required_one_of
         assert "openapi.yaml" in config.required_one_of
@@ -38,7 +38,7 @@ class TestInboxGateConfig:
 
     def test_default_require_secrets_file(self):
         """Default requires secrets file."""
-        config = InboxGateConfig(courier_slug="fedex")
+        config = InboxGateConfig(integration_id="fedex")
         assert config.require_secrets_file is True
 
 
@@ -51,7 +51,7 @@ class TestInboxGateMissingMaterials:
             processos_dir = Path(tmpdir) / ".processos"
             processos_dir.mkdir()
 
-            config = InboxGateConfig(courier_slug="fedex")
+            config = InboxGateConfig(integration_id="fedex")
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -62,13 +62,13 @@ class TestInboxGateMissingMaterials:
         """Gate fails when no API docs present."""
         with tempfile.TemporaryDirectory() as tmpdir:
             processos_dir = Path(tmpdir) / ".processos"
-            inbox_dir = processos_dir / "inbox" / "couriers" / "fedex"
+            inbox_dir = processos_dir / "inbox" / "integrations" / "fedex"
             inbox_dir.mkdir(parents=True)
 
             # Create empty inbox (no docs)
             (inbox_dir / "README.md").write_text("Empty")
 
-            config = InboxGateConfig(courier_slug="fedex")
+            config = InboxGateConfig(integration_id="fedex")
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -79,13 +79,13 @@ class TestInboxGateMissingMaterials:
         """Gate fails when secrets file missing."""
         with tempfile.TemporaryDirectory() as tmpdir:
             processos_dir = Path(tmpdir) / ".processos"
-            inbox_dir = processos_dir / "inbox" / "couriers" / "fedex"
+            inbox_dir = processos_dir / "inbox" / "integrations" / "fedex"
             inbox_dir.mkdir(parents=True)
 
             # Provide API docs but no secrets
             (inbox_dir / "openapi.yaml").write_text("openapi: 3.0.0")
 
-            config = InboxGateConfig(courier_slug="fedex")
+            config = InboxGateConfig(integration_id="fedex")
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -98,7 +98,7 @@ class TestInboxGateMissingMaterials:
             processos_dir = Path(tmpdir) / ".processos"
             processos_dir.mkdir()
 
-            config = InboxGateConfig(courier_slug="fedex")
+            config = InboxGateConfig(integration_id="fedex")
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -114,7 +114,7 @@ class TestInboxGateMaterialsPresent:
         """Gate passes with Postman collection file."""
         with tempfile.TemporaryDirectory() as tmpdir:
             processos_dir = Path(tmpdir) / ".processos"
-            inbox_dir = processos_dir / "inbox" / "couriers" / "fedex"
+            inbox_dir = processos_dir / "inbox" / "integrations" / "fedex"
             secrets_dir = processos_dir / "secrets"
             inbox_dir.mkdir(parents=True)
             secrets_dir.mkdir()
@@ -122,9 +122,9 @@ class TestInboxGateMaterialsPresent:
             # Provide Postman collection
             (inbox_dir / "fedex.postman_collection.json").write_text('{"info": {}}')
             # Provide secrets file
-            (secrets_dir / "courier_fedex.env").write_text("FEDEX_CLIENT_ID=xxx")
+            (secrets_dir / "integration_fedex.env").write_text("FEDEX_CLIENT_ID=xxx")
 
-            config = InboxGateConfig(courier_slug="fedex")
+            config = InboxGateConfig(integration_id="fedex")
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -135,7 +135,7 @@ class TestInboxGateMaterialsPresent:
         """Gate passes with OpenAPI spec."""
         with tempfile.TemporaryDirectory() as tmpdir:
             processos_dir = Path(tmpdir) / ".processos"
-            inbox_dir = processos_dir / "inbox" / "couriers" / "dhl"
+            inbox_dir = processos_dir / "inbox" / "integrations" / "dhl"
             secrets_dir = processos_dir / "secrets"
             inbox_dir.mkdir(parents=True)
             secrets_dir.mkdir()
@@ -143,9 +143,9 @@ class TestInboxGateMaterialsPresent:
             # Provide OpenAPI spec
             (inbox_dir / "openapi.yaml").write_text("openapi: 3.0.0")
             # Provide secrets file
-            (secrets_dir / "courier_dhl.env").write_text("DHL_API_KEY=xxx")
+            (secrets_dir / "integration_dhl.env").write_text("DHL_API_KEY=xxx")
 
-            config = InboxGateConfig(courier_slug="dhl")
+            config = InboxGateConfig(integration_id="dhl")
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -155,13 +155,13 @@ class TestInboxGateMaterialsPresent:
         """Gate passes without secrets if require_secrets_file=False."""
         with tempfile.TemporaryDirectory() as tmpdir:
             processos_dir = Path(tmpdir) / ".processos"
-            inbox_dir = processos_dir / "inbox" / "couriers" / "fedex"
+            inbox_dir = processos_dir / "inbox" / "integrations" / "fedex"
             inbox_dir.mkdir(parents=True)
 
             # Provide API docs only
             (inbox_dir / "openapi.json").write_text('{"openapi": "3.0.0"}')
 
-            config = InboxGateConfig(courier_slug="fedex", require_secrets_file=False)
+            config = InboxGateConfig(integration_id="fedex", require_secrets_file=False)
             gate = InboxGate(processos_dir, config)
             result = gate.check()
 
@@ -186,13 +186,13 @@ class TestInboxGateConvenienceFunction:
         """check_inbox_materials passes with valid materials."""
         with tempfile.TemporaryDirectory() as tmpdir:
             processos_dir = Path(tmpdir) / ".processos"
-            inbox_dir = processos_dir / "inbox" / "couriers" / "ups"
+            inbox_dir = processos_dir / "inbox" / "integrations" / "ups"
             secrets_dir = processos_dir / "secrets"
             inbox_dir.mkdir(parents=True)
             secrets_dir.mkdir()
 
             (inbox_dir / "swagger.yaml").write_text("swagger: 2.0")
-            (secrets_dir / "courier_ups.env").write_text("UPS_KEY=xxx")
+            (secrets_dir / "integration_ups.env").write_text("UPS_KEY=xxx")
 
             passed, result = check_inbox_materials(processos_dir, "ups")
 

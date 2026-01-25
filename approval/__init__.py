@@ -8,8 +8,6 @@ This module provides:
 - Conflict detection and warning system
 """
 
-from .types import ApprovalWorkflow as _TypesApprovalWorkflow
-from .types import ReviewSummary as _TypesReviewSummary
 from .workflow import ApprovalWorkflow, ReviewSummary
 from .formatter import ReviewSummaryFormatter
 

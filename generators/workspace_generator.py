@@ -141,15 +141,15 @@ class InboxGateConfig:
     """Inbox gate configuration for playbook."""
 
     gate_id: str
-    courier_slug: str
+    integration_id: str
     required_one_of: List[str]
     require_secrets_file: bool = True
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to sorted dictionary."""
         return {
-            "courier_slug": self.courier_slug,
             "gate_id": self.gate_id,
+            "integration_id": self.integration_id,
             "require_secrets_file": self.require_secrets_file,
             "required_one_of": sorted(self.required_one_of),
         }
@@ -571,11 +571,11 @@ Respond with valid JSON only.
         # Create inbox gates for courier integrations
         inbox_gates: List[InboxGateConfig] = []
         if request.intent == "integrate" and request.target.type == "courier":
-            courier_slug = request.target.identifier.lower()
+            integration_id = request.target.identifier.lower()
             inbox_gates.append(
                 InboxGateConfig(
-                    gate_id=f"inbox_materials_check_{courier_slug}",
-                    courier_slug=courier_slug,
+                    gate_id=f"inbox_materials_check_{integration_id}",
+                    integration_id=integration_id,
                     required_one_of=[
                         "*.postman_collection.json",
                         "openapi.yaml",

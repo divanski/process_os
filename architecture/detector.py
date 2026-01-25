@@ -27,10 +27,7 @@ from process_os.architecture.types import (
     DetectionSignal,
     ProjectArchitecture,
 )
-from process_os.architecture.errors import (
-    LanguageDetectionError,
-    FrameworkDetectionError,
-)
+from process_os.architecture.errors import LanguageDetectionError
 
 
 class LanguageDetector:
