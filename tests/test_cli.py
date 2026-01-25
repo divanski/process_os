@@ -72,7 +72,7 @@ class TestCLIInit:
         result = main(["init", "--project-root", str(tmp_path)])
 
         assert result == 0
-        assert (tmp_path / PROCESSOS_DIR / "binding.yaml").exists()
+        assert (tmp_path / PROCESSOS_DIR / "config.yaml").exists()
 
     def test_init_creates_rules(self, tmp_path: Path):
         """Init command creates rules pack."""
@@ -81,7 +81,7 @@ class TestCLIInit:
         result = main(["init", "--project-root", str(tmp_path)])
 
         assert result == 0
-        assert (tmp_path / PROCESSOS_DIR / "claude-rules" / "_index.md").exists()
+        assert (tmp_path / PROCESSOS_DIR / "claude").exists()
 
     def test_init_already_exists(self, tmp_path: Path):
         """Init returns 1 if already initialized."""

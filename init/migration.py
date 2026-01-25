@@ -91,7 +91,7 @@ def migrate_to_unified_config(project_root: Path) -> Optional[ProjectConfig]:
         fingerprint_id=fingerprint_data.get("fingerprint_id", binding.fingerprint_ref),
         stacks=stacks,
         frameworks=frameworks,
-        settings=ProjectSettings(pillars=binding.pillars),
+        settings=ProjectSettings(pillars=binding.integrations),
         migrated_from="0.7.0",
     )
 

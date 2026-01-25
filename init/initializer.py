@@ -301,7 +301,7 @@ class ProjectInitializer:
         binding = binding_gen.generate(
             fingerprint=fingerprint,
             project_name=project_name,
-            pillars=pillars,
+            integrations=pillars,  # 'pillars' param is legacy, maps to 'integrations'
             timestamp=timestamp,
         )
 
@@ -327,7 +327,19 @@ class ProjectInitializer:
         Returns:
             InitOutput with current state
         """
-        # Try unified config first
+        # Check for legacy format first if use_unified_config is False
+        if not self.use_unified_config and self.manager.exists():
+            binding = self.manager.load_binding()
+            fingerprint = self.manager.load_fingerprint()
+            return InitOutput(
+                result=InitResult.SUCCESS,
+                binding=binding,
+                fingerprint=fingerprint,
+                rules_dir=self.manager.get_rules_dir(),
+                message=f"Project initialized as '{binding.project_name}'",
+            )
+
+        # Try unified config
         config = self.config_manager.load()
         if config:
             return InitOutput(
@@ -337,22 +349,10 @@ class ProjectInitializer:
                 message=f"Project initialized as '{config.project_name}'",
             )
 
-        # Fall back to legacy format
-        if not self.manager.exists():
-            return InitOutput(
-                result=InitResult.DETECTION_FAILED,
-                message="Project not initialized. Run 'processos init' first.",
-            )
-
-        binding = self.manager.load_binding()
-        fingerprint = self.manager.load_fingerprint()
-
+        # Not initialized
         return InitOutput(
-            result=InitResult.SUCCESS,
-            binding=binding,
-            fingerprint=fingerprint,
-            rules_dir=self.manager.get_rules_dir(),
-            message=f"Project initialized as '{binding.project_name}'",
+            result=InitResult.DETECTION_FAILED,
+            message="Project not initialized. Run 'processos init' first.",
         )
 
     def refresh_fingerprint(
@@ -390,7 +390,7 @@ class ProjectInitializer:
             new_binding = binding_gen.generate(
                 fingerprint=fingerprint,
                 project_name=binding.project_name,
-                pillars=binding.pillars,
+                integrations=binding.integrations,
                 timestamp=timestamp,
             )
 

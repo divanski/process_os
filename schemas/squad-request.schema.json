@@ -14,8 +14,8 @@
     },
     "command_type": {
       "type": "string",
-      "enum": ["integration", "custom"],
-      "description": "Type of squad to generate (integration types are determined dynamically)"
+      "enum": ["courier_integration", "api_mapping", "detection_rules", "integration", "custom"],
+      "description": "Type of squad to generate"
     },
     "target": {
       "type": "object",

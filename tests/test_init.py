@@ -23,7 +23,7 @@ class TestProjectInitializer:
         """Init creates .processos directory."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init()
 
         assert output.result == InitResult.SUCCESS
@@ -33,7 +33,7 @@ class TestProjectInitializer:
         """Init creates fingerprint.yaml."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init()
 
         assert (tmp_path / PROCESSOS_DIR / "fingerprint.yaml").exists()
@@ -43,7 +43,7 @@ class TestProjectInitializer:
         """Init creates binding.yaml."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init()
 
         assert (tmp_path / PROCESSOS_DIR / "binding.yaml").exists()
@@ -53,7 +53,7 @@ class TestProjectInitializer:
         """Init returns rules directory path."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init()
 
         assert output.rules_dir is not None
@@ -63,7 +63,7 @@ class TestProjectInitializer:
         """Init returns SUCCESS for new project."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init()
 
         assert output.result == InitResult.SUCCESS
@@ -73,7 +73,7 @@ class TestProjectInitializer:
         """Init returns ALREADY_EXISTS for initialized project."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         initializer.init()
 
         # Second init without force
@@ -86,7 +86,7 @@ class TestProjectInitializer:
         """Init with force overwrites existing binding."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output1 = initializer.init()
 
         # Second init with force
@@ -99,7 +99,7 @@ class TestProjectInitializer:
         """Init uses provided project name."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init(project_name="my-custom-name")
 
         assert output.binding.project_name == "my-custom-name"
@@ -108,10 +108,10 @@ class TestProjectInitializer:
         """Init includes specified pillars."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.init(pillars=["courier"])
 
-        assert "courier" in output.binding.pillars
+        assert "courier" in output.binding.integrations
 
 
 class TestInitStatus:
@@ -119,7 +119,7 @@ class TestInitStatus:
 
     def test_status_uninitialized(self, tmp_path: Path):
         """Status returns error for uninitialized project."""
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.status()
 
         assert output.result != InitResult.SUCCESS
@@ -129,7 +129,7 @@ class TestInitStatus:
         """Status returns success for initialized project."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         initializer.init()
 
         output = initializer.status()
@@ -146,7 +146,7 @@ class TestRefreshFingerprint:
         """Refresh updates fingerprint file."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         initializer.init()
 
         output = initializer.refresh_fingerprint()
@@ -156,7 +156,7 @@ class TestRefreshFingerprint:
 
     def test_refresh_uninitialized_fails(self, tmp_path: Path):
         """Refresh fails for uninitialized project."""
-        initializer = ProjectInitializer(tmp_path)
+        initializer = ProjectInitializer(tmp_path, use_unified_config=False)
         output = initializer.refresh_fingerprint()
 
         assert output.result != InitResult.SUCCESS
@@ -169,7 +169,7 @@ class TestConvenienceFunction:
         """init_project convenience function works."""
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
-        output = init_project(tmp_path)
+        output = init_project(tmp_path, use_unified_config=False)
 
         assert output.result == InitResult.SUCCESS
         assert output.binding is not None

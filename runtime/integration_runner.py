@@ -135,7 +135,7 @@ class IntegrationRunner:
         self.target_dir = target_dir
 
         # Components
-        self.patchset_manager = PatchsetManager(project_root=project_root)
+        self.patchset_manager = PatchsetManager(project_path=project_root)
         self.material_collector = MaterialCollector()
 
         # Event callbacks

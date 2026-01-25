@@ -107,9 +107,9 @@ class TestBindingGeneration:
         (tmp_path / "pyproject.toml").write_text('[project]\nname = "test"\n')
 
         fp = generate_fingerprint(tmp_path)
-        binding = generate_binding(fp, pillars=["courier"])
+        binding = generate_binding(fp, integrations=["courier"])
 
-        assert "courier" in binding.pillars
+        assert "courier" in binding.integrations
 
 
 class TestBindingManager:

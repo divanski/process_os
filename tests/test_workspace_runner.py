@@ -1329,7 +1329,7 @@ class TestBlockedReasonCodes:
             # Create secrets so only materials are blocked
             secrets_dir = processos_dir / "secrets"
             secrets_dir.mkdir(exist_ok=True)
-            (secrets_dir / "courier_dhl.env").write_text("DHL_API_KEY=test_key\n")
+            (secrets_dir / "integration_dhl.env").write_text("DHL_API_KEY=test_key\n")
 
             generator = WorkspaceGenerator(workspaces_root)
             workspace = generator.generate(request)
@@ -1356,7 +1356,7 @@ class TestBlockedReasonCodes:
             # Create secrets so only materials are blocked
             secrets_dir = processos_dir / "secrets"
             secrets_dir.mkdir(exist_ok=True)
-            (secrets_dir / "courier_dhl.env").write_text("DHL_API_KEY=test_key\n")
+            (secrets_dir / "integration_dhl.env").write_text("DHL_API_KEY=test_key\n")
 
             generator = WorkspaceGenerator(workspaces_root)
             workspace = generator.generate(request)
@@ -1395,7 +1395,7 @@ class TestBlockedReasonCodes:
             # Create secrets so only materials are blocked
             secrets_dir = processos_dir / "secrets"
             secrets_dir.mkdir(exist_ok=True)
-            (secrets_dir / "courier_dhl.env").write_text("DHL_API_KEY=test_key\n")
+            (secrets_dir / "integration_dhl.env").write_text("DHL_API_KEY=test_key\n")
 
             generator = WorkspaceGenerator(workspaces_root)
             workspace = generator.generate(request)

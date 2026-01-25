@@ -45,16 +45,40 @@ class CommandParser:
 
     # Command patterns for different types
     # Order matters: more specific patterns first, then generic
-    # NOTE: Patterns are now generic - specific integration types are determined
-    # dynamically by the intent analysis module
     PATTERNS = [
-        # Generic integration patterns - intent analysis determines the type
+        # Courier integration patterns - order matters (more specific first)
+        ("courier_integration", [
+            r"(?:integrate|add|connect|link)\s+(?:courier|carrier|shipping|logistics)\s+([A-Za-z0-9_\- ]+)",
+            r"(?:courier|carrier|shipping|logistics)\s+([A-Za-z0-9_\- ]+)\s+(?:integration|setup|connect)",
+        ]),
+        # API mapping patterns
+        ("api_mapping", [
+            r"(?:map|create|generate)\s+(?:api|API)(?:\s+(?:for|mapping))?\s+(?:for\s+)?(?:to\s+)?([A-Za-z0-9_\- ]+)",
+            r"(?:api|API)\s+(?:mapping|map)(?:\s+for)?\s+([A-Za-z0-9_\- ]+)",
+        ]),
+        # Detection/discovery patterns
+        ("detection_rules", [
+            r"(?:detect|find|discover|identify|create\s+detection)\s+(?:for\s+)?(?:rules?\s+for\s+)?([A-Za-z0-9_\- ]+)",
+            r"(?:detection|discovery)(?:\s+(?:rules?|patterns?))?\s+(?:for\s+)?([A-Za-z0-9_\- ]+)",
+        ]),
+        # Generic integration patterns (fallback)
         ("integration", [
             r"(?:integrate|add|connect)\s+(?:integration\s+)?(?:for\s+)?(?:with\s+)?['\"]?([A-Za-z0-9_\- ]+)['\"]?(?:\s+api|\s+service)?",
             r"(?:create|setup)\s+(?:integration\s+)?(?:for\s+)?(?:with\s+)?['\"]?([A-Za-z0-9_\- ]+)['\"]?(?:\s+api|\s+service)?",
-            r"(?:new\s+)?integration[:\s]+['\"]?([A-Za-z0-9_\- ]+)['\"]?",
         ]),
     ]
+
+    # Capability keywords for domain-specific feature extraction
+    CAPABILITY_KEYWORDS = {
+        "shipment_tracking": ["tracking", "track", "trace"],
+        "label_generation": ["label", "labels", "printing"],
+        "rate_calculation": ["rate", "rates", "pricing", "quote"],
+        "pickup_scheduling": ["pickup", "collection", "schedule"],
+        "return_handling": ["return", "returns", "rma"],
+        "international_shipping": ["international", "cross-border", "global"],
+        "notifications": ["notify", "notification", "alerts", "sms", "email"],
+        "webhooks": ["webhook", "callback", "event"],
+    }
 
     def __init__(self, schema_path: Optional[Path] = None):
         """
@@ -125,23 +149,27 @@ class CommandParser:
         return "custom", "unnamed-target"
 
     def _extract_parameters(self, command: str, command_type: str) -> Dict[str, Any]:
-        """Extract parameters from command text.
-
-        NOTE: Capability extraction is now handled by the intent analysis module.
-        This method only extracts generic parameters (priority, constraints).
-        """
+        """Extract parameters from command text."""
         params: Dict[str, Any] = {
             "priority": "medium",
-            "capabilities": [],  # Populated dynamically by intent analysis
+            "capabilities": [],
             "constraints": [],
         }
 
+        # Detect capabilities from keywords
+        command_lower = command.lower()
+        for capability, keywords in self.CAPABILITY_KEYWORDS.items():
+            for keyword in keywords:
+                if keyword in command_lower:
+                    if capability not in params["capabilities"]:
+                        params["capabilities"].append(capability)
+
         # Detect priority
-        if any(word in command.lower() for word in ["urgent", "critical", "asap"]):
+        if any(word in command_lower for word in ["urgent", "critical", "asap"]):
             params["priority"] = "critical"
-        elif any(word in command.lower() for word in ["important", "high"]):
+        elif any(word in command_lower for word in ["important", "high"]):
             params["priority"] = "high"
-        elif any(word in command.lower() for word in ["low", "whenever", "eventually"]):
+        elif any(word in command_lower for word in ["low", "whenever", "eventually"]):
             params["priority"] = "low"
 
         # Detect constraints (generic)
